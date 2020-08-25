@@ -10,7 +10,7 @@ output:
     nature:
       highlightStyle: github
       highlightLines: true
-      countIncrementalSlides: false
+      countIncrementalSlides: true
       ratio: '16:9'
 ---
 # outline
@@ -70,14 +70,12 @@ background-size: 150px
 
 --
 
-+ __interdisciplinary and modular__: the code is written by the specialists. At the core of its philosophy is a smooth transition from user to programmer.
++ __interdisciplinary and modular__: lots of code written by area specialists. At the core of its philosophy is a smooth transition from user to programmer.
 
 --
 
 + __communication__ with other tools: manuscripts, presentations, apps and dashboards
 
-???
-such as this presentation, made in __xaringan__
 
 ---
 # why learn `R`?
@@ -121,56 +119,38 @@ such as this presentation, made in __xaringan__
 `r icon::fa("python")` the whole package is loaded, not some functions or parts of it. if you want to use one function you can use `package::function()`
 
 ---
+## install, load, and cite packages
+
+
+```{r, eval =F}
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("tidyverse") # just an umbrella package
+```
+
+```{r, eval = FALSE}
+library("dplyr")
+```
+
+---
+```{r, eval = FALSE}
+citation("dplyr")
+```
+
+
+---
 class: inverse, middle, center
 
-# let's take a look into RStudio
+# RStudio (IDE)
 
 ---
 background-image:url("figs/00_rstudio.png")
-background-size: 100%
-
-![](https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-125.png)
-
----
-background-image:url("figs/00_rstudio.png")
-background-size: 100%
-
-![](https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-125.png)
-
-
-.pull-left[
-### source (text editor)
-]
-
-.pull-right[
-### *workspace*
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-### plots, file navigator etc.
-]
-
-.footnote[
-<br>
-### console
-]
-]
-
-???
-customizable 
+background-size: 80%
 
 ---
 
 + Check for the following panes: 
 
-  + Source -> Scripts and documents  
-if you don't see it open a new script <kbd>`Ctrl`</kbd> + <kbd>`Shift`</kbd>+ <kbd>`N`</kbd> (a file with .R extension)
   + Environment -> Objects in the __workspace__
   + Files
   + Plots
@@ -193,65 +173,23 @@ Some other that might be useful _later_:
 
 --
 
-+ in `Global options > General > R Sessions`:
++ in `Global options > General > R Sessions` OR `cmd` + `,`
 "default working directory when not in a project"
 
 --
 
-+ remember `pwd` in bash? in R: `getwd()` in the console
++ `getwd()` in the console
 
-
-??? 
-
-aqui interactuar por primera vez con rstudio
-
----
-## working directory
-
+--
 
 + we have to tell R where we are working -> change the working directory
-
---
-
-+ every project should be executed in a single folder
-
---
-
-+ it is also a good practice to create __reproducible__ analyses 
-
---
-
-+ every computer is different, so how do we collaborate? `r emojifont::emoji("thinking")`
-
-
----
-## absolute vs. relative paths
-
-+ absolute paths  
-  `C://My_Documents`
-  `/users/my_name/` 
-
---
-
-+ instead: __relative paths__
---
-
-  + here: `.` or nothing (ex. `read.csv("data.csv")`)
-  + subfolders: `./data_raw`
-  + subsubfolder: `./subfolder1/subsubfolder1`
-  + the upper level: `..`
-  + a "sibling" folder (goes up one level and then down): `../sibling`
-
---
-
-### relative file paths will be interpreted from the working directory
 
 ---
 ## project organization
 
-+ projects are better organized if we use __subfolders__ within our working directory
++ projects are better organized if we use __one folder per project__ and  __subfolders__ within our working directory
 
-+ __provenance__: we shouldn't modify __raw data files__ but __save processed data__ (and the corresponding scripts) 
++ take care of data __provenance__: we shouldn't modify __raw data files__ but __save processed data__ (and the corresponding scripts) 
 
 
 ---
@@ -266,7 +204,6 @@ project/
 *    ├── figs/
      ├── R/
      ├── output/
-     ├── project.RProj
      └── README.md
 ```
 
@@ -276,14 +213,6 @@ project/
 
 1. Select our folder for this project
 2. Create a subfolder structure: `/figs`, `/data_raw`, `/data`
-
-??? 
-Aqui entonces foco en la consola de RStudio
- se muestran de nuevo los paneles, el file navigator
- cómo saber cuál es el wd 
- les muestro como ir a un folder de escolha
- volverlo el wd
- crear subpastas data_raw data
 
 ---
 # RStudio projects 
@@ -295,71 +224,250 @@ RStudio projects create a .Rproj file in your folder that acts as a shortcut for
 + reopen files
 + __git__ pane available
 
-???
-show how to create a RStudio project
-
 ---
-## the workspace
+## about the workspace
 
-+ R creates objects 
-
---
-
-+ they occupy RAM memory
++ R creates __objects__ that occupy RAM memory: the __workspace__
 
 --
 
-+ they can be saved and loaded 
++ the __workspace__ can be saved and loaded between sessions BUT
 
 --
 
-+ but __you can lose track of how you created them__ 
++ __you can lose track of how you created the objects in the workspace__
 
 --
 
 + `#goodpractices` don't save the workspace
+
 ---
 background-image:url("figs/0a_setup.png")
 background-size: 60%
 background-position: 100% 100%
 
+.pull-left[in the general options]
 
 ---
 background-image:url("figs/0b_soft_wrap.png")
 background-size: 60%
 background-position: 100% 100%
 
-.pull-left[
-soft wrap your scripts
-]
 
----
-background-image:url("figs/0bb_packages.png")
-background-size: 50%
-background-position: 100% 100%
+__soft wrap__ your scripts so you don't have to scroll side to side
 
-"use the closest CRAN mirror"
-
----
-background-image:url("figs/0c_codificacao.png")
-background-size: 50%
-background-position: 100% 100%
-
-encoding can be a problem between operative systems. set it to UTF-8.
-
-.pull-left[
-![](figs/encoding.png)
-]
+__soft wrap__ your scripts so you don't </br> have to scroll side to side
 
 ---
 background-image:url("figs/0d_terminal.png")
-background-size: 50%
+background-size: 60%
 background-position: 100% 100%
 
-set __bash__ or __git bash__ as the default shell terminal
+.pull-left[
+check your terminal
+]
 
 ---
-class: middle, center
 
-![](https://media.giphy.com/media/3oriO04qxVReM5rJEA/giphy.gif)
++ we have an __RStudio project__ in the correct __working directory__, with a nice file structure and RStudio is configured
+
++ how did package installation go?
+
+--
+
+<center>
+```{r gif, out.width=300, echo = FALSE}
+knitr::include_graphics("https://media.giphy.com/media/3oriO04qxVReM5rJEA/giphy.gif")
+```
+
+
+---
+## intro to R 
+
++ `<-` is the assignment operation in R and it does not return output
+
+--
+
++ overwriting objects __does not affect other objects__ 
+
+--
+
++  __naming things__: don't begin with a number or symbol. be consistent with your __coding style__! 
+
+--
+
++ separators can be anything and (you could use `.` but be nice).
+
+ <!-- + `r icon::fa("python")` R doesn't care about indentation --> 
+
+
+---
+## data types in R
+
+<small>
+```{r datatypes}
+animals  <- c("mouse", "rat", "dog")
+weight_g <- c(50, 60, 65, 82)
+```
+
+--
+
+```{r remedy003}
+class(animals)
+```
+
+--
+
+```{r class}
+class(weight_g)
+```
+</small>
+
+`character` and `numeric` but also `logical` and `integer` ("whole" numbers, with no decimal component, in $N$), `complex`, and others. 
+
+
+---
+## subsetting vectors
+
++ R is __1-indexed__ and intervals are closed (not half-open)
+
+```{r, results = 'show'}
+animals <- c("mouse", "rat", "dog", "cat")
+animals[2]
+```
+
++ Subsetting is done with brackets `[]`
+
+```{r subset}
+animals[c(3, 2)]
+```
+---
+## conditional subsetting
+
+```{r, results = 'show'}
+weight_g <- c(21, 34, 39, 54, 55)
+weight_g[c(TRUE, FALSE, FALSE, TRUE, TRUE)]
+```
+
+Nobody works like this, instead we use __logical clauses__ to __generate__ these logical vectors
+
+---
+## logical clauses
+
++ equality or not: `==`, `!=`
++ inequalities: `<`. `>`, `<=`, `>=`
++ union (OR) `|`
++ intersection (AND) `&`
++ belonging `%in%`
++ differences between sets: `setdiff()`
++ negation works `!`: "not in" `!a %in% b`
+
+---
+## comparing vectors
+
+<small>
+```{r recycling}
+
+animals      <- c("mouse", "rat", "dog", "cat")
+more_animals <- c("rat", "cat", "dog", "duck", "goat")
+
+animals %in% more_animals
+```
+
+---
+##comparing vectors
+
+<small>
+```{r recycling2}
+animals      <- c("mouse", "rat", "dog", "cat")
+more_animals <- c("rat", "cat", "dog", "duck", "goat")
+
+animals == more_animals
+```
+
++ Vectors are compared __one by one AND recycled__ when one of them is shorter, so use `%in%` when you want to check __belonging to a set__
+
+---
+## missing data
+
+<small>
+```{r na}
+heights <- c(2, 4, 4, NA, 6)
+mean(heights)
+max(heights)
+mean(heights, na.rm = TRUE)
+max(heights, na.rm = TRUE)
+```
+
+---
+## factors
+
+<small>
+```{r remedy007}
+
+more_animals
+class(more_animals)
+```
+
+
+
+---
+## factors
+
+<small>
+```{r remedy008}
+animals_fac <- as.factor(more_animals)
+class(animals_fac)
+levels(animals_fac)
+# in alphabetical order!!!
+```
+
+---
+## factors
+
+<small>
+```{r}
+animals_fac2 <- factor(animals_fac,
+                       levels = c("dog", "cat", "rat", "mouse"))
+
+animals_fac
+animals_fac2 # after re-ordering
+```
+
+---
+## factors
+
+<small>
+```{r remedy009}
+animals_back <- as.character(animals_fac)
+identical(more_animals, animals_back)
+```
+
+---
+
+## data structures
+
++ __vector__: lineal arrays (one dimension: only length)
+
+--
+
++ __factors__: vectors (one-dimensional) representing __categorical variables__ and thus having __levels__
+
+--
+
++ __matrices__: arrays of vectors -> the same type (all numeric or all character, for instance) (two dimensions: width and length)
+
+--
+
++ __data frames__: two-dimensional arrays but might be of combined types (i.e., column 1 with names, column 2 with numbers)
+
+--
+
++ __arrays__ are similar to matrices and dataframes but may be three-dimensional ("layered" data frames)
+
+--
+
++ __list__: literally a list of anything (a list of data frames, or different objects)
+
+
 

@@ -56,9 +56,6 @@ class: inverse, middle, center
 # overview of R and RStudio
 
 ---
-background-image: url("figs/chevron.png")
-background-position: 98% 2%
-background-size: 150px
 
 ## why learn `R`?
 
@@ -78,7 +75,7 @@ background-size: 150px
 
 
 ---
-# why learn `R`?
+## why learn `R`?
 
 + communication with __other programming languages__ (ex. __reticulate__ to run python scripts) 
 
@@ -95,6 +92,10 @@ background-size: 150px
 
 + __an active and welcoming community__:  email lists, Stack Overflow, [RStudio community](community.rstudio.com/), useR groups, .purple[R-Ladies+] chapters, Slack communities, `r icon::fa("twitter")` `#rstats`
 
+<center>
+```{r remedy001, out.width=150, echo = FALSE}
+knitr::include_graphics("./figs/chevron.png")
+```
 
 ---
 ## `R` has a modular structure: __packages__
@@ -116,7 +117,19 @@ background-size: 150px
 
 --
 
-`r icon::fa("python")` the whole package is loaded, not some functions or parts of it. if you want to use one function you can use `package::function()`
++ the whole package is loaded, not some functions or parts of it. if you want to use one function you can use `package::function()`
+
+---
+## how to run R
+
++ from the R program in Windows ~~but don't~~
+
++ directly in the __terminal__ in Linux and Mac (just type `R`). this is important in __HPC__ environments like the UC Merced cluster (R scripts can also be run from outside R)
+
++ many GUIs and text editors: rgedit, __emacs ESS__, Atom, Sublime Text etc.
+
++ __RStudio__: an Integrated Development Environment (IDE) - Desktop Version but also Server and Cloud versions
+
 
 ---
 ## install, load, and cite packages
@@ -128,20 +141,29 @@ install.packages("ggplot2")
 install.packages("tidyverse") # just an umbrella package
 ```
 
++ if you get an error about a missing __dependency__ copy the name of the missing package(s) and execute `install.packages()`
+
 ```{r, eval = FALSE}
 library("dplyr")
-```
-
----
-```{r, eval = FALSE}
 citation("dplyr")
 ```
 
-
 ---
-class: inverse, middle, center
 
-# RStudio (IDE)
+## about notation
+
++ __packages__ are collections of __functions__
+--
+
++ __functions__ have __arguments__ or __parameters__ (options) 
+--
+
++ To designate them:
+  + package name: __base__ (in bold letters)
+  + function name: `help()` (in fixed width font and with parentheses at the end)
+  + objects and arguments: `data`, `na.rm` (in fixed width font)
+  + sometimes you'll see `stats::median()` this is correct syntaxis `program::function()` and helps distinguish __functions with the same name__ or calling one function only (from an __installed__ package)
+
 
 ---
 background-image:url("figs/00_rstudio.png")
@@ -209,13 +231,13 @@ project/
 
 ---
 
-# Hands on: 
+## Hands on: 
 
 1. Select our folder for this project
 2. Create a subfolder structure: `/figs`, `/data_raw`, `/data`
 
 ---
-# RStudio projects 
+## RStudio projects 
 
 RStudio projects create a .Rproj file in your folder that acts as a shortcut for your projects
 
@@ -282,7 +304,11 @@ knitr::include_graphics("https://media.giphy.com/media/3oriO04qxVReM5rJEA/giphy.
 
 
 ---
-## intro to R 
+class:middle, inverse, center
+## introduction to R 
+
+---
+## introduction to R 
 
 + `<-` is the assignment operation in R and it does not return output
 
@@ -323,6 +349,8 @@ class(weight_g)
 ```
 </small>
 
+--
+
 `character` and `numeric` but also `logical` and `integer` ("whole" numbers, with no decimal component, in $N$), `complex`, and others. 
 
 
@@ -341,6 +369,7 @@ animals[2]
 ```{r subset}
 animals[c(3, 2)]
 ```
+
 ---
 ## conditional subsetting
 
@@ -400,50 +429,6 @@ max(heights, na.rm = TRUE)
 ```
 
 ---
-## factors
-
-<small>
-```{r remedy007}
-
-more_animals
-class(more_animals)
-```
-
-
-
----
-## factors
-
-<small>
-```{r remedy008}
-animals_fac <- as.factor(more_animals)
-class(animals_fac)
-levels(animals_fac)
-# in alphabetical order!!!
-```
-
----
-## factors
-
-<small>
-```{r}
-animals_fac2 <- factor(animals_fac,
-                       levels = c("dog", "cat", "rat", "mouse"))
-
-animals_fac
-animals_fac2 # after re-ordering
-```
-
----
-## factors
-
-<small>
-```{r remedy009}
-animals_back <- as.character(animals_fac)
-identical(more_animals, animals_back)
-```
-
----
 
 ## data structures
 
@@ -468,6 +453,9 @@ identical(more_animals, animals_back)
 --
 
 + __list__: literally a list of anything (a list of data frames, or different objects)
+
+---
+class: inverse, middle, center
 
 
 

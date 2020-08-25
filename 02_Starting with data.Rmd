@@ -1,0 +1,354 @@
+---
+subtitle: "GROW UC Merced 2020"
+author: "Andrea Sánchez-Tapia"
+date: "25th August 2020"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: true
+      ratio: '16:9'
+---
+class: inverse, middle, center
+## starting with data
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+```{r xaringanthemer, include = FALSE}
+library(xaringanthemer)
+xaringanthemer::style_mono_accent(
+  base_color = "#A70000",
+  #  primary_color = "#A70000",
+  #secondary_color = "#ff0000",
+  white_color = "white",
+  colors = c(
+    red = "#A70000",
+    purple = "#88398a",
+    orange = "#ff8811",
+    green = "#136f63",
+    blue = "#4B4FFF",
+    white = "#FFFFFF",
+    black = "#181818"
+  ),
+  header_font_google = google_font("Roboto Condensed"),
+  text_font_google   = google_font("Roboto Condensed", "300", "300i"),
+  code_font_google   = google_font("Ubuntu Mono"),
+  text_font_size = "30px",
+  code_font_size = "30px",
+  )
+```
+
+---
+## the survey dataset
+
++ One row per individual
+
+<center>
+```{r columns, echo = FALSE, out.width = 500}
+knitr::include_graphics("figs/columns.png")
+```
+
+
+---
+## downloading the dataset
+
+We are going to download the file to our `data_raw` sub folder: 
+
+```{r, eval = FALSE}
+
+download.file(url = "https://ndownloader.figshare.com/files/2292169",
+              destfile = "data_raw/portal_data_joined.csv")
+```
+
+We can read it using function `read.csv()`
+
+```{r}
+surveys <- read.csv("data_raw/portal_data_joined.csv")
+```
+
+ <!-- mostrar el help de read.csv - un equivalente sería surveys <- read.table(file="data_raw/portal_data_joined.csv", sep=",", header=TRUE) --> 
+
+---
+## reading files into R
+
+Functions to read data are key to any project.   
+for dataframes: `read.csv()`, `read.delim()`
+
+```{r}
+surveys <- read.csv("data_raw/portal_data_joined.csv")
+surveys_check <- read.table(file = "data_raw/portal_data_joined.csv", 
+                            sep = ",", 
+                            header = TRUE)
+identical(surveys, surveys_check)
+```
+
+There are __many other ways__ to read data into R, some are specific for the type of data (GIS shapefiles or raster, and specific packages may come with their own reader functions)
+
+
+```{r try, echo = FALSE, eval=FALSE}
+surveys
+View(surveys)
+head(surveys)
+str(surveys)
+dim(surveys)
+nrow(surveys)
+ncol(surveys)
+head(surveys) # 6 rows by default
+tail(surveys)
+names(surveys)
+rownames(surveys)
+str(surveys)
+summary(surveys)
+length(surveys) # number of columns 
+```
+
+
+---
+## inspecting `data.frame` objects
+
+Based on the output of `str(surveys)`, can you answer the following questions?
+
++ What is the class of the object surveys?
+
++ How many rows and how many columns are in this object?
+
++ How many species have been recorded during these surveys?
+
+--
+
+  + `data.frame`
+
+--
+
+  + 34786 rows and 13 columns
+
+--
+
+  + Number of species?
+
+```{r challenge, echo = FALSE, eval = FALSE, purl=TRUE}
+unique(surveys$species)
+unique(surveys$species_id) # we dont know what this code is about
+```
+
+---
+## indexing and subsetting data frames
+
++ a vector has only one dimension, so:
+
+  + `length()` refers to number of __elements__
+  + `dim()` 
+  + selection between brackets `[]`
+
+--
+
++ a data.frame has __two__ dimensions, so `dim()`, `ncol()`, `nrow()` and selection between brackets `[]` BUT with the two dimensions separated by a comma: `[rows, columns]`
+
+---
+## indexing and subsetting data frames
+
+<small>
+```{r, eval = FALSE, echo = TRUE}
+# first element in the first column of the data frame (as a vector)
+
+# first element in the 6th column (as a vector)
+
+# first column of the data frame (as a vector)
+
+# first column of the data frame (as a data.frame)
+
+# first three elements in the 7th column (as a vector)
+
+# the 3rd row of the data frame (as a data.frame)
+
+# equivalent to head_surveys <- head(surveys)
+
+```
+
+```{r, eval = FALSE, echo = FALSE}
+# first element in the first column of the data frame (as a vector)
+surveys[1, 1]   
+# first element in the 6th column (as a vector)
+surveys[1, 6]   
+# first column of the data frame (as a vector)
+surveys[, 1]    
+# first column of the data frame (as a data.frame)
+surveys[1]      
+# first three elements in the 7th column (as a vector)
+surveys[1:3, 7] 
+# the 3rd row of the data frame (as a data.frame)
+surveys[3, ]    
+# equivalent to head_surveys <- head(surveys)
+head_surveys <- surveys[1:6, ] 
+```
+
+
+---
+## indexing and subsetting data frames
+
++ minus sign to __remove__ the indexed column or row
+
+```{r, eval = FALSE}
+# The whole data frame, except the first column
+surveys[, -1]          
+surveys[-(7:34786), ] # Equivalent to head(surveys)
+```
+
+---
+## subsetting by name
+
+```{r subset, eval = FALSE}
+  surveys["species_id"]       # Result is a data.frame
+* surveys[, "species_id"]     # Result is a vector
+  surveys[["species_id"]]     # Result is a vector
+* surveys$species_id          # Result is a vector
+```
+
+---
+## challenge
+
+<small>
+
++ Create a data.frame (`surveys_200`) containing only the data in row 200 of the `surveys` dataset
+
++ Notice how `nrow()` gave you the number of rows in a data.frame? Use that number to pull out just that last row in the data frame
+
++ Compare that with what you see as the last row using `tail()` to make sure it’s meeting expectations
+
++ Pull out that last row using `nrow()` instead of the row number.
+
++ Create a new data frame (`surveys_last`) from that last row.
+
++ Use `nrow()` to extract the row that is in the middle of the data frame. Store the content of this row in an object named `surveys_middle`.
+
++ Combine `nrow()` with the - notation above to reproduce the behavior of `head(surveys)`, keeping just the first through 6th rows of the surveys dataset.
+
+</small>
+
+```{r challenge2, eval = FALSE, echo = FALSE}
+# Create a data.frame (`surveys_200`) containing only the data in row 200 of the `surveys` dataset
+
+# Notice how `nrow()` gave you the number of rows in a data.frame? Use that number to pull out just that last row in the data frame
+
+# Compare that with what you see as the last row using `tail()` to make sure it’s meeting expectations
+
+# Pull out that last row using `nrow()` instead of the row number.
+
+# Create a new data frame (`surveys_last`) from that last row.
+
+# Use `nrow()` to extract the row that is in the middle of the data frame. Store the content of this row in an object named `surveys_middle`.
+
+# Combine `nrow()` with the - notation above to reproduce the behavior of `head(surveys)`, keeping just the first through 6th rows of the surveys dataset.
+
+```
+
+---
+## factors
+
++ __factors__: vectors (one-dimensional) representing __categorical variables__ and thus having __levels__. ordered or unordered (`c(“low”, “medium”, “high”)`
+
++ R < 4.0 had a default behavior `stringsAsFactors = TRUE` so any character column was transformed into a factor 
+
+```r
+`?read.csv()`
+?default.stringsAsFactors
+```
+
+## today if we want factors we have to transform the vectors
+
+---
+## factors
+
+<small>
+```{r eval = FALSE, echo= TRUE}
+## Compare the difference between our data read as
+#`factor` vs `character`.
+surveys <- read.csv("data_raw/portal_data_joined.csv",
+                    stringsAsFactors = TRUE)
+str(surveys)
+surveys <- read.csv("data_raw/portal_data_joined.csv",
+                    stringsAsFactors = FALSE)
+str(surveys)
+## Convert the column "plot_type" and sex into a factor
+surveys$plot_type <- factor(surveys$plot_type)
+surveys$sex <- factor(surveys$sex)
+```
+
+---
+## working with factors
+
+<small>
+```{r remedy001, echo = TRUE, eval = FALSE}
+sex <- factor(c("male", "female", "female", "male"))
+levels(sex) # in alphabetical order!
+nlevels(sex) 
+sex
+sex <- factor(sex, levels = c("male", "female"))
+sex # after re-ordering
+as.character(sex)
+
+year_fct <- factor(c(1990, 1983, 1977, 1998, 1990))
+as.numeric(year_fct)               # Wrong! And there is no warning...
+as.numeric(as.character(year_fct)) # Works...
+as.numeric(levels(year_fct))
+as.numeric(levels(year_fct))[year_fct]    # The recommended way.
+```
+
+---
+## let's make a plot of a factor variable
+
+`plot(as.factor(surveys$sex))`
+
+.pull-right[let's rename this label]
+
+```{r plot, eval = TRUE, echo = FALSE}
+plot(as.factor(surveys$sex))
+#take the variable out
+sex <- factor(surveys$sex) 
+#head(sex, n = 6)
+#levels(sex)
+levels(sex)[1] <- "undetermined"
+#levels(sex)
+#head(sex) # hasta aquí con ellos
+```
+
+---
+## let's make a plot of a factor variable
+
+`plot(sex)`
+
+.pull-right[let's rename this label]
+
+```{r plot2, eval = TRUE, echo = FALSE}
+plot(sex)
+```
+
+
+---
+## challenge
+
+<small>
+
+.pull-left[
+```{r remedy003, echo = FALSE, eval = TRUE}
+levels(sex)[2] <- "female"
+levels(sex)[3] <- "male"
+sex <- factor(sex, levels = c("female", "male", "undetermined"))
+plot(as.factor(sex))
+```
+]
+
+.pull-right[
+
++ Rename “F” and “M” to “female” and “male” respectively.
+
++ Now that we have renamed the factor level to “undetermined”, can you recreate the barplot such that “undetermined” is last (after “male”)?
+]
+
+

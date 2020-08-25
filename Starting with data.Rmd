@@ -1,0 +1,248 @@
+---
+subtitle: "GROW UC Merced 2020"
+author: "Andrea Sánchez-Tapia"
+date: "25th August 2020"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+class: inverse, middle, center
+## starting with data
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+```{r xaringanthemer, include = FALSE}
+library(xaringanthemer)
+xaringanthemer::style_mono_accent(
+  base_color = "#A70000",
+  #  primary_color = "#A70000",
+  #secondary_color = "#ff0000",
+  white_color = "white",
+  colors = c(
+    red = "#A70000",
+    purple = "#88398a",
+    orange = "#ff8811",
+    green = "#136f63",
+    blue = "#4B4FFF",
+    white = "#FFFFFF",
+    black = "#181818"
+  ),
+  header_font_google = google_font("Roboto Condensed"),
+  text_font_google   = google_font("Roboto Condensed", "300", "300i"),
+  code_font_google   = google_font("Ubuntu Mono"),
+  text_font_size = "30px",
+  code_font_size = "30px",
+  )
+```
+
+---
+## The survey data
+
+```{r columns, echo = FALSE, out.width=4}
+knitr::include_graphics("figs/columns.png")
+```
+
+
+---
+## downloading the dataset
+
+We are going to download the file to our `data_raw` sub folder: 
+
+```{r, eval = FALSE}
+
+download.file(url = "https://ndownloader.figshare.com/files/2292169",
+              destfile = "data_raw/portal_data_joined.csv")
+```
+
+We can read it using function `read.csv()`
+
+```{r}
+surveys <- read.csv("data_raw/portal_data_joined.csv")
+```
+
+ <!-- mostrar el help de read.csv - un equivalente sería surveys <- read.table(file="data_raw/portal_data_joined.csv", sep=",", header=TRUE) --> 
+
+---
+## reading files into R
+
+Functions to read data are key to any project in base: `read.csv()`, `read.delim()`
+
+```{r}
+surveys <- read.csv("data_raw/portal_data_joined.csv")
+surveys_check <- read.table(file = "data_raw/portal_data_joined.csv", 
+                            sep = ",", 
+                            header = TRUE)
+identical(surveys, surveys_check)
+```
+
+There are other ways to read data into R, some are specific for the type of data (GIS shapefiles or raster, specific packages may come with their own reader functions)
+
+---
+
+Print the object: 
+
+```{r try, eval=FALSE}
+surveys
+View(surveys)
+```
+
+```{r head}
+head(surveys)
+```
+
+---
+
+```{r}
+str(surveys)
+```
+
+---
+# inspecting `data.frame` objects
+
+```{r}
+dim(surveys)
+nrow(surveys)
+ncol(surveys)
+head(surveys) # 6 rows by default
+tail(surveys)
+names(surveys)
+rownames(surveys)
+str(surveys)
+summary(surveys)
+length(surveys) # number of columns 
+```
+
+---
+## inspecting `data.frame` objects
+
+
+---
+
+## indexing and subsetting data frames
+
++ a vector has only one dimension, so a length no `dim()` and selection between brackets `[]`
+
+--
+
++ a data.frame has two dimensions, so `dim()`, `ncol()`, `nrow()` and selection between brackets `[]` BUT with the two dimensions inside them, `[rows, columns]`
+
+--
+## indexing and subsetting data frames
+
+```{r, eval = FALSE}
+# first element in the first column of the data frame (as a vector)
+surveys[1, 1]   
+# first element in the 6th column (as a vector)
+surveys[1, 6]   
+# first column of the data frame (as a vector)
+surveys[, 1]    
+# first column of the data frame (as a data.frame)
+surveys[1]      
+# first three elements in the 7th column (as a vector)
+surveys[1:3, 7] 
+# the 3rd row of the data frame (as a data.frame)
+surveys[3, ]    
+# equivalent to head_surveys <- head(surveys)
+head_surveys <- surveys[1:6, ] 
+```
+
+
+---
+## indexing and subsetting data frames
+
++ minus sign to __remove__ the indexed column or row
+
+```{r}
+surveys[, -1]          # The whole data frame, except the first column
+surveys[-(7:34786), ] # Equivalent to head(surveys)
+```
+
+---
+## subsetting by name
+
+```{r remedy001}
+surveys$record_id
+surveys[ , "record_id"]
+
+
+```
+
+
+
+---
+## about notation
+
++ __packages__ are collections of __functions__
+--
+
++ __functions__ have __arguments__ or __parameters__ (options) 
+--
+
++ To designate them:
+  + package name: __base__ (in bold letters)
+  + function name: `help()` (in fixed width font and with parentheses at the end
+  + parameter: `na.rm` (in fixed width font)
+  + sometimes you'll see `stats::median()` this is correct sintaxis and helps distinguish functions with the same name.
+---
+
+
+ex. `mean(x)` calculates the mean of the elements in object x.  
+`mean(x, na.rm = TRUE)` calculates the mean of object x _after removing NAs_  `na.rm` is an __argument__ of the function
+
+---
+
+```{r}
+x <- c(1, 2, 3, 4)
+mean(x)
+```
+
+--
+
+```{r}
+y <- c(1, 2, 3, 4, NA)
+mean(y)
+
+```
+
+--
+
+```{r}
+mean(y, na.rm = TRUE)
+```
+
+
+---
+
+## absolute vs. relative paths
+
++ every computer is different, so how do we collaborate? `r emojifont::emoji("thinking")`
+
+--
+
++ absolute paths  
+  `C://My_Documents`
+  `/users/my_name/` 
+
+--
+
++ instead: __relative paths__
+--
+
+  + here: `.` or nothing (ex. `read.csv("data.csv")`)
+  + subfolders: `./data_raw`
+  + subsubfolder: `./subfolder1/subsubfolder1`
+  + the upper level: `..`
+  + a "sibling" folder (goes up one level and then down): `../sibling`
+
+--
+
+### relative file paths will be interpreted from the working directory

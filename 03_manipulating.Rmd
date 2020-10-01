@@ -12,8 +12,8 @@ output:
       countIncrementalSlides: true
       ratio: '16:9'
 ---
-class: middle, center
-## manipulating and analyzing data with __dplyr__
+class: middle, center, inverse
+## manipulating and analyzing data with dplyr
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -229,6 +229,7 @@ mean_w <- summarize(surveys_g2,
 mean_w
 
 ```
+
 ---
 ## arrange sorts by a column
 
@@ -377,127 +378,181 @@ ggplot(data = <data>,
 
 [cheat sheet link](https://rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
 
+---
+## ggplot2 plots are built sequentially in layers  
 
-```{r ggplot, echo= FALSE, eval = FALSE}
+
+```{r ggplot, echo= TRUE, eval = TRUE, message=F, warning=F}
 library(ggplot2)
 library(readr)
 
 surveys_complete <- read_csv("data/surveys_complete.csv")
+```
 
-ggplot(data = surveys_complete,
-       mapping = aes(x = weight, y = hindfoot_length)) +
-  geom_point()
-  
-# Assign plot to a variable
+
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}
+ggplot(data = surveys_complete,                          # data
+       mapping = aes(x = weight, y = hindfoot_length)) + # aesthetics
+  geom_point()                                        # plot function
+```
+
+
+---
+## you can assign a plot to an object and build on it
+
+<small>
+```{r, out.width=350}
 surveys_plot <- ggplot(data = surveys_complete, 
                        mapping = aes(x = weight,
                                      y = hindfoot_length))
-
-# Draw the plot
 surveys_plot + 
     geom_point()
+```
 
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}
 surveys_plot + 
-    geom_point(alpha = 0.1)
+    geom_point(alpha = 0.1) #transparency
+```
 
+
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}
 surveys_plot + 
-    geom_point(alpha = 0.1, color = "blue")
+    geom_point(alpha = 0.1, color = "blue") #color
+```
 
+
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}
 surveys_plot + 
-    geom_point(alpha = 0.1, aes(color = "blue"))
+    geom_point(alpha = 0.1, aes(color = "blue")) #this is a mistake!
+#blue is not a variable so it should not go inside aes()
+```
 
+
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}
 surveys_plot + 
     geom_point(alpha = 0.1, aes(color = species_id))
+# but variables do go inside aes()
+```
 
-# challenge
+---
+## challenge: change x to categorial variable
+
+<small>
+```{r, out.width=350}
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
    geom_point(aes(color = plot_type))
+```
 
+
+---
+## boxplots!
+
+<small>
+```{r, out.width=350}
 # boxplots
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
    geom_boxplot()
+```
 
 
+---
+## theme options `theme_`
+
+<small>
+```{r, out.width=350}
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
    geom_boxplot() +
   theme_classic()
+```
 
+
+---
+## add jitter layer 
+
+<small>
+```{r, out.width=350}
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
    geom_boxplot() +
   geom_jitter(alpha = 0.3, color = "dodgerblue", width = 0.2) +
   theme_classic()
+```
 
+---
+## change plot order
+
+<small>
+```{r, out.width=350}
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
-   geom_violin() +
-#  geom_jitter(alpha = 0.3, color = "dodgerblue", width = 0.2) +
+  geom_jitter(alpha = 0.3, color = "dodgerblue", width = 0.2) +
+  geom_boxplot() +
   theme_classic()
+```
 
-?scale_y_log10
 
+---
+## violin plots
+
+<small>
+```{r, out.width=350}
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
-   geom_violin() +
-  scale_y_log10() + 
-  theme_classic() #nice!
+   geom_violin() + theme_classic()
+```
 
-ggplot(data = surveys_complete, 
+
+---
+## change scale (`scale_xx` options)
+
+<small>
+```{r, out.width=350}
+p <- ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = weight)) +
-   geom_violin() +
-  scale_y_log10() + 
-  theme_classic() +
-  #ggtitle("Nice violin plot", size = 2)
-  ggtitle("Nice violin plot")
-  
-as.factor(surveys_complete$plot_id)
+   geom_violin() + scale_y_log10() + theme_classic() #nice!
+p
+```
 
+---
+## add title `ggtitle()`
+
+```{r, out.width=350}
+p +  #remember the plot can be an object
+  ggtitle("Nice violin plot")
+```
+
+
+---
+## ggplot2 plots are built sequentially in layers  
+
+<small>
+```{r, out.width=350}  
 ggplot(data = surveys_complete, 
        mapping = aes(x = species_id, y = hindfoot_length)) +
-   #geom_violin() +
-   geom_boxplot() +
-   #geom_jitter(size = 0.5, alpha = 0.1, col = "blue", width = 0.2) +
    geom_jitter(size = 0.5, alpha = 0.1, width = 0.2, aes(col = plot_id)) +
-  scale_y_log10() + 
-  theme_classic() +
-  #ggtitle("Nice violin plot", size = 2)
-  ggtitle("Nice violin plot")
-
-surveys_complete$plot_id <- as.factor(surveys_complete$plot_id)
-
-ggplot(data = surveys_complete, 
-       mapping = aes(x = species_id, y = hindfoot_length)) +
-   #geom_violin() +
-   geom_boxplot() +
-   #geom_jitter(size = 0.5, alpha = 0.1, col = "blue", width = 0.2) +
-   geom_jitter(size = 0.5, alpha = 0.1, width = 0.2, aes(col = plot_id)) +
-  scale_y_log10() + 
-  theme_classic() +
-  #ggtitle("Nice violin plot", size = 2)
-  ggtitle("Nice violin plot")
-  
-
-surveys_plot + 
-    geom_point() +
-  geom_abline(intercept = 2, slope = 1, col = "red")
-
-surveys_plot + 
-    geom_point() +
-    geom_line()  
-
-surveys_plot + 
-    geom_point() +
-    geom_smooth()  
-    
-
-install.packages("hexbin")
-library("hexbin")
-surveys_plot +
- geom_hex()
-
-
+   geom_boxplot() + scale_y_log10() + theme_classic() + ggtitle("Nice violin plot")
 ```
 

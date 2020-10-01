@@ -171,7 +171,11 @@ unique(surveys$species_id) # we dont know what this code is about
 
 ```
 
-```{r, eval = FALSE, echo = FALSE}
+---
+## indexing and subsetting data frames
+
+<small>
+```{r, eval = FALSE, echo = TRUE}
 # first element in the first column of the data frame (as a vector)
 surveys[1, 1]   
 # first element in the 6th column (as a vector)
@@ -209,6 +213,8 @@ surveys[-(7:34786), ] # Equivalent to head(surveys)
   surveys[["species_id"]]     # Result is a vector
 * surveys$species_id          # Result is a vector
 ```
+
++ R has several ways to do some things
 
 ---
 ## challenge
